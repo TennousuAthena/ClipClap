@@ -1,0 +1,400 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "ClipClap 剪贴板历史管理工具"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "记录、搜索和复用系统剪贴板历史"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "ClipClap"
+    },
+    {
+      "name": "read_clipboard_permission_reason",
+      "value": "用于读取系统剪贴板内容并生成本地剪贴板历史。"
+    },
+    {
+      "name": "float_window_permission_reason",
+      "value": "用于在快捷键触发时显示剪贴板历史全局悬浮窗口。"
+    },
+    {
+      "name": "internet_permission_reason",
+      "value": "用于按用户设置预览剪贴板 HTML 内容中的远程图片。"
+    },
+    {
+      "name": "app_title",
+      "value": "ClipClap"
+    },
+    {
+      "name": "app_subtitle",
+      "value": "剪贴板管理器"
+    },
+    {
+      "name": "nav_history",
+      "value": "历史记录"
+    },
+    {
+      "name": "nav_settings",
+      "value": "设置"
+    },
+    {
+      "name": "nav_about",
+      "value": "关于"
+    },
+    {
+      "name": "history_subtitle",
+      "value": "记录、搜索并复用最近复制的内容"
+    },
+    {
+      "name": "settings_subtitle",
+      "value": "快捷键、权限和剪贴板行为"
+    },
+    {
+      "name": "about_subtitle",
+      "value": "版本、权限和实现说明"
+    },
+    {
+      "name": "search_placeholder",
+      "value": "搜索剪贴板内容"
+    },
+    {
+      "name": "filter_all",
+      "value": "全部"
+    },
+    {
+      "name": "filter_pinned",
+      "value": "固定"
+    },
+    {
+      "name": "action_refresh",
+      "value": "刷新"
+    },
+    {
+      "name": "action_clear",
+      "value": "清理"
+    },
+    {
+      "name": "action_close",
+      "value": "关闭"
+    },
+    {
+      "name": "action_open_popup",
+      "value": "打开弹窗"
+    },
+    {
+      "name": "action_open_settings",
+      "value": "打开设置"
+    },
+    {
+      "name": "action_copy",
+      "value": "复制"
+    },
+    {
+      "name": "action_pin",
+      "value": "固定"
+    },
+    {
+      "name": "action_unpin",
+      "value": "取消固定"
+    },
+    {
+      "name": "action_delete",
+      "value": "删除"
+    },
+    {
+      "name": "permission_title",
+      "value": "需要读取剪贴板权限"
+    },
+    {
+      "name": "permission_body",
+      "value": "授权后，ClipClap 才能监听系统剪贴板并生成本地历史。"
+    },
+    {
+      "name": "permission_action",
+      "value": "授予权限"
+    },
+    {
+      "name": "permission_granted",
+      "value": "权限已授予"
+    },
+    {
+      "name": "empty_title",
+      "value": "还没有剪贴板历史"
+    },
+    {
+      "name": "empty_body",
+      "value": "复制文本、链接、代码、图片或文件后，这里会自动出现记录。"
+    },
+    {
+      "name": "status_ready",
+      "value": "准备就绪"
+    },
+    {
+      "name": "status_empty_clipboard",
+      "value": "系统剪贴板为空"
+    },
+    {
+      "name": "status_text_only",
+      "value": "当前剪贴板内容暂不支持记录"
+    },
+    {
+      "name": "status_recorded",
+      "value": "已记录最新剪贴板"
+    },
+    {
+      "name": "status_load_empty",
+      "value": "暂无剪贴板历史"
+    },
+    {
+      "name": "status_load_done",
+      "value": "已加载历史记录"
+    },
+    {
+      "name": "status_permission_denied",
+      "value": "无法读取剪贴板，请确认权限"
+    },
+    {
+      "name": "status_copy_done",
+      "value": "已复制到系统剪贴板"
+    },
+    {
+      "name": "status_copy_failed",
+      "value": "复制失败，系统拒绝写入剪贴板"
+    },
+    {
+      "name": "status_delete_done",
+      "value": "已删除记录"
+    },
+    {
+      "name": "status_clear_done",
+      "value": "已清理未固定记录"
+    },
+    {
+      "name": "status_clear_empty",
+      "value": "历史记录已清空"
+    },
+    {
+      "name": "status_pin_done",
+      "value": "已固定记录"
+    },
+    {
+      "name": "status_unpin_done",
+      "value": "已取消固定"
+    },
+    {
+      "name": "kind_text",
+      "value": "文本"
+    },
+    {
+      "name": "kind_link",
+      "value": "链接"
+    },
+    {
+      "name": "kind_code",
+      "value": "代码"
+    },
+    {
+      "name": "kind_html",
+      "value": "HTML"
+    },
+    {
+      "name": "kind_image",
+      "value": "图片"
+    },
+    {
+      "name": "image_placeholder",
+      "value": "[图片]"
+    },
+    {
+      "name": "kind_uri",
+      "value": "URI"
+    },
+    {
+      "name": "kind_file",
+      "value": "文件"
+    },
+    {
+      "name": "kind_custom",
+      "value": "媒体"
+    },
+    {
+      "name": "setting_hotkey",
+      "value": "触发快捷键"
+    },
+    {
+      "name": "setting_hotkey_desc",
+      "value": "设置唤起剪贴板悬浮窗的全局快捷键。"
+    },
+    {
+      "name": "hotkey_meta_key",
+      "value": "Harmony 键"
+    },
+    {
+      "name": "setting_hotkey_restart_hint",
+      "value": "快捷键修改将在重启应用后生效。"
+    },
+    {
+      "name": "setting_about",
+      "value": "关于"
+    },
+    {
+      "name": "setting_about_desc",
+      "value": "查看项目介绍、网站和用户协议。"
+    },
+    {
+      "name": "setting_version",
+      "value": "版本"
+    },
+    {
+      "name": "setting_version_desc",
+      "value": "当前应用版本。"
+    },
+    {
+      "name": "setting_debug_mode",
+      "value": "调试模式"
+    },
+    {
+      "name": "setting_debug_mode_desc",
+      "value": "显示调试入口和开发期辅助操作。"
+    },
+    {
+      "name": "setting_capacity",
+      "value": "历史容量"
+    },
+    {
+      "name": "setting_capacity_desc",
+      "value": "限制本地保存的剪贴板历史条数。"
+    },
+    {
+      "name": "setting_clipboard_permission",
+      "value": "剪贴板权限"
+    },
+    {
+      "name": "setting_clipboard_permission_desc",
+      "value": "读取系统剪贴板并生成历史记录所需。"
+    },
+    {
+      "name": "setting_permission_pc",
+      "value": "PC/2in1 可申请，首次默认允许"
+    },
+    {
+      "name": "setting_listening",
+      "value": "监听剪贴板"
+    },
+    {
+      "name": "setting_listening_desc",
+      "value": "系统剪贴板变化后自动捕获新内容。"
+    },
+    {
+      "name": "setting_auto_paste",
+      "value": "自动粘贴"
+    },
+    {
+      "name": "setting_auto_paste_desc",
+      "value": "调试中：选中历史项后尝试直接粘贴到当前输入位置。"
+    },
+    {
+      "name": "setting_plain_text_paste",
+      "value": "仅粘贴为纯文本"
+    },
+    {
+      "name": "setting_plain_text_paste_desc",
+      "value": "复制历史项时去除富文本格式，只写入纯文本。"
+    },
+    {
+      "name": "setting_remote_image_preview",
+      "value": "预览远程图片"
+    },
+    {
+      "name": "setting_remote_image_preview_desc",
+      "value": "选中包含网络图片的 HTML 内容时加载首张远程图片。"
+    },
+    {
+      "name": "setting_record_local_files",
+      "value": "记录本地文件"
+    },
+    {
+      "name": "setting_record_local_files_desc",
+      "value": "调试中：允许把本地文件 URI/统一数据写入剪贴板历史，默认关闭。"
+    },
+    {
+      "name": "setting_status_bar_icon",
+      "value": "系统托盘图标"
+    },
+    {
+      "name": "setting_status_bar_icon_desc",
+      "value": "测试中：在 PC 状态栏显示 ClipClap 图标，点击后打开剪贴板历史悬浮窗。"
+    },
+    {
+      "name": "setting_auto_startup",
+      "value": "开机自启动"
+    },
+    {
+      "name": "setting_auto_startup_desc",
+      "value": "跳转系统设置，由用户允许应用随开机启动。"
+    },
+    {
+      "name": "auto_startup_enabled",
+      "value": "系统已允许"
+    },
+    {
+      "name": "auto_startup_unavailable",
+      "value": "需在系统设置中开启"
+    },
+    {
+      "name": "setting_hide_on_blur",
+      "value": "失去焦点后隐藏悬浮窗"
+    },
+    {
+      "name": "setting_hide_on_blur_desc",
+      "value": "切换到其他窗口后自动收起剪贴板悬浮窗。"
+    },
+    {
+      "name": "debug_raw_payload",
+      "value": "原始负载"
+    },
+    {
+      "name": "debug_raw_payload_copy_hint",
+      "value": "点击复制 JSON"
+    },
+    {
+      "name": "about_version",
+      "value": "0.1.0"
+    },
+    {
+      "name": "about_body",
+      "value": "ClipClap 是面向 HarmonyOS PC 的剪贴板历史管理工具。第一版提供主界面、剪贴板历史、搜索、固定、删除、清理、多媒体记录和快捷键唤起辅助窗口。"
+    },
+    {
+      "name": "about_permission_note",
+      "value": ""
+    },
+    {
+      "name": "about_website",
+      "value": "官方网站"
+    },
+    {
+      "name": "about_terms",
+      "value": "使用协议"
+    },
+    {
+      "name": "about_privacy",
+      "value": "隐私许可"
+    },
+    {
+      "name": "about_community",
+      "value": "用户交流"
+    },
+    {
+      "name": "about_open_source",
+      "value": "开放源代码"
+    },
+    {
+      "name": "image_preview_unavailable",
+      "value": "图片预览不可用"
+    }
+  ]
+}

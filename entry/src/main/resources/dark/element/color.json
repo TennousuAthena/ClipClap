@@ -1,0 +1,72 @@
+{
+  "color": [
+    {
+      "name": "start_window_background",
+      "value": "#000000"
+    },
+    {
+      "name": "app_background",
+      "value": "#101317"
+    },
+    {
+      "name": "app_sidebar_background",
+      "value": "#171B20"
+    },
+    {
+      "name": "app_surface",
+      "value": "#1D2229"
+    },
+    {
+      "name": "app_surface_subtle",
+      "value": "#262C34"
+    },
+    {
+      "name": "app_text_primary",
+      "value": "#F2F5F7"
+    },
+    {
+      "name": "app_text_secondary",
+      "value": "#B8C0CC"
+    },
+    {
+      "name": "app_text_muted",
+      "value": "#7D8794"
+    },
+    {
+      "name": "app_border",
+      "value": "#333A44"
+    },
+    {
+      "name": "app_accent",
+      "value": "#4EC4B0"
+    },
+    {
+      "name": "app_on_accent",
+      "value": "#06231F"
+    },
+    {
+      "name": "app_accent_soft",
+      "value": "#173A34"
+    },
+    {
+      "name": "app_danger",
+      "value": "#FF8A7A"
+    },
+    {
+      "name": "app_warning_soft",
+      "value": "#3D310C"
+    },
+    {
+      "name": "app_warning_text",
+      "value": "#F4C76A"
+    },
+    {
+      "name": "app_popup_scrim",
+      "value": "#88000000"
+    },
+    {
+      "name": "app_popup_shadow",
+      "value": "#66000000"
+    }
+  ]
+}

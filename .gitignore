@@ -1,0 +1,32 @@
+# Dependencies
+/node_modules
+/oh_modules
+
+# Local machine and IDE state
+/local.properties
+/.idea
+/.deveco
+.DS_Store
+**/.DS_Store
+
+# Build and analysis output
+**/build
+/.hvigor
+/.appanalyzer
+**/.test
+
+# Native tooling caches
+.cxx
+/.clangd
+/.clang-format
+/.clang-tidy
+
+# Signing materials and local profiles
+*.p12
+*.cer
+*.p7b
+*.jks
+*.keystore
+*.pem
+*.key
+*.csr
