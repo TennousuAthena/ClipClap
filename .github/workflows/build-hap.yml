@@ -1,0 +1,59 @@
+name: Build unsigned HAP
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build unsigned HAP
+    runs-on: macos-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup HarmonyOS build tools
+        uses: Snapp-Mobile/oh-action@v0.1
+
+      - name: Print tool versions
+        run: |
+          which ohpm
+          ohpm --version
+          which hvigorw
+          hvigorw --version --accept-license
+
+      - name: Install dependencies
+        run: ohpm install --all
+
+      - name: Disable signing for CI
+        run: node .github/scripts/prepare-unsigned-build-profile.mjs
+
+      - name: Build unsigned HAP
+        run: |
+          hvigorw clean --no-parallel --no-daemon
+          hvigorw assembleHap --mode module -p module=entry@default -p product=default -p buildMode=debug --stacktrace --no-parallel --no-daemon
+
+      - name: Collect unsigned HAP
+        run: |
+          mkdir -p artifacts
+          cp entry/build/default/outputs/default/entry-default-unsigned.hap artifacts/ClipClap-entry-default-unsigned.hap
+          ls -lh artifacts
+
+      - name: Upload unsigned HAP
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClipClap-unsigned-hap
+          path: artifacts/ClipClap-entry-default-unsigned.hap
+          if-no-files-found: error
+          retention-days: 14
