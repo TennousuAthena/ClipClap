@@ -60,6 +60,8 @@ run_hvigor() {
 
 run_hvigor "${DEVECO_TOOLS_HOME:-}/hvigor/bin/hvigorw" "$@" || true
 
+run_node_hvigor "${ROOT_DIR}/node_modules/@ohos/hvigor/bin/hvigor.js" "$@" || true
+
 run_node_hvigor "${CMD_PATH:-}/bin/hvigorw.js" "$@" || true
 run_node_hvigor "${CMD_PATH:-}/hvigor/bin/hvigorw.js" "$@" || true
 run_node_hvigor "${CMD_PATH:-}/hvigor/hvigor/bin/hvigor.js" "$@" || true

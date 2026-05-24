@@ -18,31 +18,40 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup HarmonyOS build tools
-        uses: Snapp-Mobile/oh-action@v0.1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          install-dependencies: "false"
+          node-version: 20
+
+      - name: Setup OpenHarmony SDK
+        uses: openharmony-rs/setup-ohos-sdk@v1.0.0
+        with:
+          version: "6.1"
+
+      - name: Configure build environment
+        run: |
+          echo "DEVECO_SDK_HOME=${OHOS_BASE_SDK_HOME}" >> "${GITHUB_ENV}"
+          npm config set @ohos:registry https://repo.harmonyos.com/npm/
+          npm config set registry https://registry.npmjs.org/
+
+      - name: Install Hvigor
+        run: |
+          npm install --no-save --no-package-lock @ohos/hvigor@6.22.7 @ohos/hvigor-ohos-plugin@6.22.7
 
       - name: Print tool versions
         run: |
-          which ohpm
-          ohpm --version
-          echo "CMD_PATH=${CMD_PATH}"
-          find "${CMD_PATH}" -maxdepth 6 -type f \( -name hvigorw -o -name hvigor -o -name hvigorw.js -o -name hvigor.js \) -print || true
-          command -v hvigorw || true
-          command -v hvigor || true
-          ./hvigorw --version --accept-license
-
-      - name: Install dependencies
-        run: ohpm install --all
+          node --version
+          node node_modules/@ohos/hvigor/bin/hvigor.js --version --accept-license
+          echo "OHOS_BASE_SDK_HOME=${OHOS_BASE_SDK_HOME}"
+          echo "DEVECO_SDK_HOME=${DEVECO_SDK_HOME}"
 
       - name: Disable signing for CI
         run: node .github/scripts/prepare-unsigned-build-profile.mjs
 
       - name: Build unsigned HAP
         run: |
-          ./hvigorw clean --no-parallel --no-daemon
-          ./hvigorw assembleHap --mode module -p module=entry@default -p product=default -p buildMode=debug --stacktrace --no-parallel --no-daemon
+          node node_modules/@ohos/hvigor/bin/hvigor.js clean --no-parallel --no-daemon
+          node node_modules/@ohos/hvigor/bin/hvigor.js assembleHap --mode module -p module=entry@default -p product=default -p buildMode=debug --stacktrace --no-parallel --no-daemon
 
       - name: Collect unsigned HAP
         run: |
