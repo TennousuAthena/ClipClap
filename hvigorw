@@ -2,41 +2,55 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SELF_PATH="$(cd "$(dirname "$0")" && pwd -P)/$(basename "$0")"
 
-if [[ -n "${DEVECO_TOOLS_HOME:-}" && -x "${DEVECO_TOOLS_HOME}/hvigor/bin/hvigorw" ]]; then
-  exec "${DEVECO_TOOLS_HOME}/hvigor/bin/hvigorw" "$@"
+run_hvigor() {
+  local candidate="$1"
+  shift
+
+  if [[ ! -x "$candidate" ]]; then
+    return 1
+  fi
+
+  local candidate_path="$candidate"
+  if [[ "$candidate" == */* ]]; then
+    candidate_path="$(cd "$(dirname "$candidate")" && pwd -P)/$(basename "$candidate")"
+  fi
+
+  if [[ "$candidate_path" == "$SELF_PATH" ]]; then
+    return 1
+  fi
+
+  exec "$candidate" "$@"
+}
+
+run_hvigor "${DEVECO_TOOLS_HOME:-}/hvigor/bin/hvigorw" "$@" || true
+
+run_hvigor "${CMD_PATH:-}/bin/hvigorw" "$@" || true
+run_hvigor "${CMD_PATH:-}/bin/hvigor" "$@" || true
+run_hvigor "${CMD_PATH:-}/hvigor/bin/hvigorw" "$@" || true
+run_hvigor "${CMD_PATH:-}/hvigor/bin/hvigor" "$@" || true
+
+if [[ -n "${CMD_PATH:-}" && -d "${CMD_PATH}" ]]; then
+  while IFS= read -r candidate; do
+    run_hvigor "$candidate" "$@" || true
+  done < <(find "${CMD_PATH}" -type f \( -name hvigorw -o -name hvigor \) 2>/dev/null)
 fi
 
-if [[ -n "${CMD_PATH:-}" && -x "${CMD_PATH}/bin/hvigorw" ]]; then
-  exec "${CMD_PATH}/bin/hvigorw" "$@"
-fi
+hvigorw_path="$(command -v hvigorw || true)"
+run_hvigor "$hvigorw_path" "$@" || true
 
-if [[ -n "${CMD_PATH:-}" && -x "${CMD_PATH}/bin/hvigor" ]]; then
-  exec "${CMD_PATH}/bin/hvigor" "$@"
-fi
-
-if [[ -n "${CMD_PATH:-}" && -x "${CMD_PATH}/hvigor/bin/hvigorw" ]]; then
-  exec "${CMD_PATH}/hvigor/bin/hvigorw" "$@"
-fi
-
-if command -v hvigorw >/dev/null 2>&1; then
-  exec "$(command -v hvigorw)" "$@"
-fi
-
-if command -v hvigor >/dev/null 2>&1; then
-  exec "$(command -v hvigor)" "$@"
-fi
+hvigor_path="$(command -v hvigor || true)"
+run_hvigor "$hvigor_path" "$@" || true
 
 if [[ -x "/Applications/DevEco-Studio.app/Contents/tools/hvigor/bin/hvigorw" ]]; then
   if [[ -z "${DEVECO_SDK_HOME:-}" && -d "/Applications/DevEco-Studio.app/Contents/sdk" ]]; then
     export DEVECO_SDK_HOME="/Applications/DevEco-Studio.app/Contents/sdk"
   fi
-  exec "/Applications/DevEco-Studio.app/Contents/tools/hvigor/bin/hvigorw" "$@"
+  run_hvigor "/Applications/DevEco-Studio.app/Contents/tools/hvigor/bin/hvigorw" "$@" || true
 fi
 
-if [[ -x "${ROOT_DIR}/node_modules/.bin/hvigor" ]]; then
-  exec "${ROOT_DIR}/node_modules/.bin/hvigor" "$@"
-fi
+run_hvigor "${ROOT_DIR}/node_modules/.bin/hvigor" "$@" || true
 
 echo "Unable to locate hvigorw. Install DevEco Studio or run through the CI setup action." >&2
 exit 127
