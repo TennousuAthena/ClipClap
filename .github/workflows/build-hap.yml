@@ -45,8 +45,8 @@ jobs:
           echo "OHOS_BASE_SDK_HOME=${OHOS_BASE_SDK_HOME}"
           echo "DEVECO_SDK_HOME=${DEVECO_SDK_HOME}"
 
-      - name: Disable signing for CI
-        run: node .github/scripts/prepare-unsigned-build-profile.mjs
+      - name: Use CI build profile
+        run: cp build-profile.ci.json5 build-profile.json5
 
       - name: Build unsigned HAP
         run: |
