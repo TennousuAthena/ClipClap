@@ -7,8 +7,24 @@ if [[ -n "${DEVECO_TOOLS_HOME:-}" && -x "${DEVECO_TOOLS_HOME}/hvigor/bin/hvigorw
   exec "${DEVECO_TOOLS_HOME}/hvigor/bin/hvigorw" "$@"
 fi
 
+if [[ -n "${CMD_PATH:-}" && -x "${CMD_PATH}/bin/hvigorw" ]]; then
+  exec "${CMD_PATH}/bin/hvigorw" "$@"
+fi
+
+if [[ -n "${CMD_PATH:-}" && -x "${CMD_PATH}/bin/hvigor" ]]; then
+  exec "${CMD_PATH}/bin/hvigor" "$@"
+fi
+
 if [[ -n "${CMD_PATH:-}" && -x "${CMD_PATH}/hvigor/bin/hvigorw" ]]; then
   exec "${CMD_PATH}/hvigor/bin/hvigorw" "$@"
+fi
+
+if command -v hvigorw >/dev/null 2>&1; then
+  exec "$(command -v hvigorw)" "$@"
+fi
+
+if command -v hvigor >/dev/null 2>&1; then
+  exec "$(command -v hvigor)" "$@"
 fi
 
 if [[ -x "/Applications/DevEco-Studio.app/Contents/tools/hvigor/bin/hvigorw" ]]; then
