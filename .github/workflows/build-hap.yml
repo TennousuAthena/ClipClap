@@ -28,7 +28,7 @@ jobs:
           which ohpm
           ohpm --version
           echo "CMD_PATH=${CMD_PATH}"
-          find "${CMD_PATH}" -maxdepth 5 -type f \( -name hvigorw -o -name hvigor \) -print || true
+          find "${CMD_PATH}" -maxdepth 6 -type f \( -name hvigorw -o -name hvigor -o -name hvigorw.js -o -name hvigor.js \) -print || true
           command -v hvigorw || true
           command -v hvigor || true
           ./hvigorw --version --accept-license

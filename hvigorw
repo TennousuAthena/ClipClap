@@ -4,6 +4,36 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SELF_PATH="$(cd "$(dirname "$0")" && pwd -P)/$(basename "$0")"
 
+resolve_path() {
+  local target="$1"
+  local dir
+  local link
+
+  while [[ -L "$target" ]]; do
+    dir="$(cd "$(dirname "$target")" && pwd -P)"
+    link="$(readlink "$target")"
+    if [[ "$link" == /* ]]; then
+      target="$link"
+    else
+      target="${dir}/${link}"
+    fi
+  done
+
+  dir="$(cd "$(dirname "$target")" && pwd -P)"
+  echo "${dir}/$(basename "$target")"
+}
+
+run_node_hvigor() {
+  local script="$1"
+  shift
+
+  if [[ ! -r "$script" ]]; then
+    return 1
+  fi
+
+  exec node -- "$script" "$@"
+}
+
 run_hvigor() {
   local candidate="$1"
   shift
@@ -14,17 +44,31 @@ run_hvigor() {
 
   local candidate_path="$candidate"
   if [[ "$candidate" == */* ]]; then
-    candidate_path="$(cd "$(dirname "$candidate")" && pwd -P)/$(basename "$candidate")"
+    candidate_path="$(resolve_path "$candidate")"
   fi
 
   if [[ "$candidate_path" == "$SELF_PATH" ]]; then
     return 1
   fi
 
-  exec "$candidate" "$@"
+  if [[ "${CLIPCLAP_HVIGORW_ACTIVE:-}" == "1" && "$(basename "$candidate")" == "hvigorw" ]]; then
+    return 1
+  fi
+
+  CLIPCLAP_HVIGORW_ACTIVE=1 exec "$candidate" "$@"
 }
 
 run_hvigor "${DEVECO_TOOLS_HOME:-}/hvigor/bin/hvigorw" "$@" || true
+
+run_node_hvigor "${CMD_PATH:-}/bin/hvigorw.js" "$@" || true
+run_node_hvigor "${CMD_PATH:-}/hvigor/bin/hvigorw.js" "$@" || true
+run_node_hvigor "${CMD_PATH:-}/hvigor/hvigor/bin/hvigor.js" "$@" || true
+
+if [[ -n "${CMD_PATH:-}" && -d "${CMD_PATH}" ]]; then
+  while IFS= read -r script; do
+    run_node_hvigor "$script" "$@" || true
+  done < <(find "${CMD_PATH}" -type f \( -name hvigorw.js -o -name hvigor.js \) 2>/dev/null)
+fi
 
 run_hvigor "${CMD_PATH:-}/bin/hvigorw" "$@" || true
 run_hvigor "${CMD_PATH:-}/bin/hvigor" "$@" || true
