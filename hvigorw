@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+if [[ -n "${DEVECO_TOOLS_HOME:-}" && -x "${DEVECO_TOOLS_HOME}/hvigor/bin/hvigorw" ]]; then
+  exec "${DEVECO_TOOLS_HOME}/hvigor/bin/hvigorw" "$@"
+fi
+
+if [[ -n "${CMD_PATH:-}" && -x "${CMD_PATH}/hvigor/bin/hvigorw" ]]; then
+  exec "${CMD_PATH}/hvigor/bin/hvigorw" "$@"
+fi
+
+if [[ -x "/Applications/DevEco-Studio.app/Contents/tools/hvigor/bin/hvigorw" ]]; then
+  if [[ -z "${DEVECO_SDK_HOME:-}" && -d "/Applications/DevEco-Studio.app/Contents/sdk" ]]; then
+    export DEVECO_SDK_HOME="/Applications/DevEco-Studio.app/Contents/sdk"
+  fi
+  exec "/Applications/DevEco-Studio.app/Contents/tools/hvigor/bin/hvigorw" "$@"
+fi
+
+if [[ -x "${ROOT_DIR}/node_modules/.bin/hvigor" ]]; then
+  exec "${ROOT_DIR}/node_modules/.bin/hvigor" "$@"
+fi
+
+echo "Unable to locate hvigorw. Install DevEco Studio or run through the CI setup action." >&2
+exit 127

@@ -18,20 +18,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
       - name: Setup HarmonyOS build tools
         uses: Snapp-Mobile/oh-action@v0.1
+        with:
+          install-dependencies: "false"
 
       - name: Print tool versions
         run: |
           which ohpm
           ohpm --version
-          which hvigorw
-          hvigorw --version --accept-license
+          ./hvigorw --version --accept-license
 
       - name: Install dependencies
         run: ohpm install --all
@@ -41,8 +37,8 @@ jobs:
 
       - name: Build unsigned HAP
         run: |
-          hvigorw clean --no-parallel --no-daemon
-          hvigorw assembleHap --mode module -p module=entry@default -p product=default -p buildMode=debug --stacktrace --no-parallel --no-daemon
+          ./hvigorw clean --no-parallel --no-daemon
+          ./hvigorw assembleHap --mode module -p module=entry@default -p product=default -p buildMode=debug --stacktrace --no-parallel --no-daemon
 
       - name: Collect unsigned HAP
         run: |
