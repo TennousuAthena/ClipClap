@@ -2,7 +2,7 @@
   "string": [
     {
       "name": "module_desc",
-      "value": "ClipClap 剪贴板历史管理工具"
+      "value": "剪贴板历史管理工具"
     },
     {
       "name": "EntryAbility_desc",
@@ -10,7 +10,7 @@
     },
     {
       "name": "EntryAbility_label",
-      "value": "ClipClap"
+      "value": "ClipClap 剪切板管理"
     },
     {
       "name": "read_clipboard_permission_reason",
@@ -41,6 +41,10 @@
       "value": "设置"
     },
     {
+      "name": "nav_developer",
+      "value": "开发者"
+    },
+    {
       "name": "nav_about",
       "value": "关于"
     },
@@ -51,6 +55,14 @@
     {
       "name": "settings_subtitle",
       "value": "快捷键、权限和剪贴板行为"
+    },
+    {
+      "name": "developer_subtitle",
+      "value": "开发期入口和调试行为"
+    },
+    {
+      "name": "settings_window_title",
+      "value": "ClipClap 设置"
     },
     {
       "name": "about_subtitle",
@@ -74,7 +86,11 @@
     },
     {
       "name": "action_clear",
-      "value": "清理"
+      "value": "清空"
+    },
+    {
+      "name": "action_cancel",
+      "value": "取消"
     },
     {
       "name": "action_close",
@@ -170,11 +186,19 @@
     },
     {
       "name": "status_clear_done",
-      "value": "已清理未固定记录"
+      "value": "历史记录已清空"
     },
     {
       "name": "status_clear_empty",
       "value": "历史记录已清空"
+    },
+    {
+      "name": "clear_history_confirm_title",
+      "value": "清空历史记录？"
+    },
+    {
+      "name": "clear_history_confirm_message",
+      "value": "这会删除全部剪贴板历史，包括已固定项目。此操作不可撤销。"
     },
     {
       "name": "status_pin_done",
@@ -326,7 +350,15 @@
     },
     {
       "name": "setting_status_bar_icon_desc",
-      "value": "测试中：在 PC 状态栏显示 ClipClap 图标，点击后打开剪贴板历史悬浮窗。"
+      "value": "测试中：在 PC 状态栏显示 ClipClap 图标，点击后打开剪贴板历史。"
+    },
+    {
+      "name": "setting_floating_window_presentation",
+      "value": "以悬浮窗方式展现窗口"
+    },
+    {
+      "name": "setting_floating_window_presentation_desc",
+      "value": "开发中：快捷键和状态栏入口打开悬浮窗；关闭时拉起主程序窗口。"
     },
     {
       "name": "setting_auto_startup",

@@ -17,6 +17,30 @@
         "description": "$string:EntryAbility_desc",
         "icon": "$media:layered_image",
         "label": "$string:EntryAbility_label",
+        "launchType": "singleton",
+        "supportWindowMode": [
+          "floating"
+        ],
+        "minWindowWidth": 520,
+        "minWindowHeight": 860,
+        "metadata": [
+          {
+            "name": "ohos.ability.window.width",
+            "value": "640"
+          },
+          {
+            "name": "ohos.ability.window.height",
+            "value": "860"
+          },
+          {
+            "name": "ohos.ability.window.left",
+            "value": "center"
+          },
+          {
+            "name": "ohos.ability.window.top",
+            "value": "center"
+          }
+        ],
         "startWindowIcon": "$media:startIcon",
         "startWindowBackground": "$color:start_window_background",
         "exported": true,
@@ -30,6 +54,42 @@
             ]
           }
         ]
+      },
+      {
+        "name": "SettingsAbility",
+        "srcEntry": "./ets/entryability/SettingsAbility.ets",
+        "description": "$string:EntryAbility_desc",
+        "icon": "$media:layered_image",
+        "label": "$string:settings_window_title",
+        "launchType": "singleton",
+        "supportWindowMode": [
+          "fullscreen",
+          "split",
+          "floating"
+        ],
+        "minWindowWidth": 1100,
+        "minWindowHeight": 760,
+        "metadata": [
+          {
+            "name": "ohos.ability.window.width",
+            "value": "1200"
+          },
+          {
+            "name": "ohos.ability.window.height",
+            "value": "820"
+          },
+          {
+            "name": "ohos.ability.window.left",
+            "value": "center"
+          },
+          {
+            "name": "ohos.ability.window.top",
+            "value": "center"
+          }
+        ],
+        "startWindowIcon": "$media:startIcon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": false
       }
     ],
     "extensionAbilities": [
@@ -59,17 +119,8 @@
         "reason": "$string:read_clipboard_permission_reason",
         "usedScene": {
           "abilities": [
-            "EntryAbility"
-          ],
-          "when": "inuse"
-        }
-      },
-      {
-        "name": "ohos.permission.SYSTEM_FLOAT_WINDOW",
-        "reason": "$string:float_window_permission_reason",
-        "usedScene": {
-          "abilities": [
-            "EntryAbility"
+            "EntryAbility",
+            "SettingsAbility"
           ],
           "when": "inuse"
         }

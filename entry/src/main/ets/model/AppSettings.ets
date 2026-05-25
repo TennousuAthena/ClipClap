@@ -13,6 +13,7 @@ export class AppSettings {
   isRecordLocalFilesEnabled: boolean = false;
   isStatusBarIconEnabled: boolean = false;
   isDebugModeEnabled: boolean = false;
+  isFloatingWindowPresentationEnabled: boolean = false;
   isHideOnBlurEnabled: boolean = true;
   isAutoStartupEnabled: boolean = false;
   popupLeft: number = 260;

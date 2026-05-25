@@ -1,4 +1,4 @@
-import { common } from '@kit.AbilityKit';
+import { common, Want } from '@kit.AbilityKit';
 import { KeyCode, pointer } from '@kit.InputKit';
 import { ClipboardHistoryStatus, ClipboardHistoryStore, ClipboardItem } from '../services/ClipboardHistoryStore';
 import { AutoPasteService } from '../core/hotkey/AutoPasteService';
@@ -12,6 +12,7 @@ const POPUP_SEARCH_INPUT_ID = 'popup_search_input';
 const POPUP_MONO_FONT = 'JetBrains Mono';
 const TEXT_PREVIEW_LENGTH_THRESHOLD = 180;
 const RESIZE_HANDLE_SIZE = 18;
+const SETTINGS_ABILITY_NAME = 'SettingsAbility';
 
 @Entry
 @Component
@@ -28,6 +29,8 @@ struct Popup {
   @State private isCtrlPressed: boolean = false;
   @State private selectedIndex: number = 0;
   @State private isResizing: boolean = false;
+  @State private isPreviewFocusActive: boolean = false;
+  @State private hoveredPreviewItemId: string = '';
   private resizeStartX: number = 0;
   private resizeStartY: number = 0;
   private resizeStartWidth: number = 0;
@@ -72,7 +75,9 @@ struct Popup {
       })
       .onTouch((event: TouchEvent) => {
         if (event.type === TouchType.Down) {
-          PopupWindowController.getInstance().startMoving();
+          if (this.isFloatingWindowMode()) {
+            PopupWindowController.getInstance().startMoving();
+          }
         }
       })
 
@@ -89,8 +94,26 @@ struct Popup {
             this.selectedIndex = 0;
             this.updateImagePreview();
           })
+          .onFocus(() => {
+            this.isPreviewFocusActive = true;
+            this.updateImagePreview();
+          })
+          .onBlur(() => {
+            this.isPreviewFocusActive = false;
+            ImagePreviewWindowController.getInstance().hidePreview();
+          })
           .onKeyEvent((event: KeyEvent) => {
             return this.handleKeyEvent(event);
+          })
+        Button() {
+          this.ButtonLabel($r('sys.symbol.gearshape'), $r('app.string.action_open_settings'),
+            $r('app.color.app_text_secondary'))
+        }
+          .height(42)
+          .margin({ left: 10 })
+          .backgroundColor(Color.Transparent)
+          .onClick(() => {
+            this.openSettingsWindow();
           })
         Button() {
           this.ButtonLabel($r('sys.symbol.xmark'), $r('app.string.action_close'), $r('app.color.app_text_secondary'))
@@ -99,7 +122,7 @@ struct Popup {
           .margin({ left: 10 })
           .backgroundColor(Color.Transparent)
           .onClick(() => {
-            PopupWindowController.getInstance().hidePopup();
+            this.closePopupSurface();
           })
       }
       .width('100%')
@@ -134,21 +157,23 @@ struct Popup {
       Row() {
         Blank()
           .layoutWeight(1)
-        Column() {
+        if (this.isFloatingWindowMode()) {
+          Column() {
+          }
+            .width(RESIZE_HANDLE_SIZE)
+            .height(RESIZE_HANDLE_SIZE)
+            .border({ width: { right: 2, bottom: 2 }, color: $r('app.color.app_text_muted') })
+            .onHover((isHover: boolean) => {
+              if (isHover) {
+                cursorControl.setCursor(pointer.PointerStyle.SOUTH_EAST);
+              } else {
+                cursorControl.restoreDefault();
+              }
+            })
+            .onTouch((event: TouchEvent) => {
+              this.handleResizeTouch(event);
+            })
         }
-          .width(RESIZE_HANDLE_SIZE)
-          .height(RESIZE_HANDLE_SIZE)
-          .border({ width: { right: 2, bottom: 2 }, color: $r('app.color.app_text_muted') })
-          .onHover((isHover: boolean) => {
-            if (isHover) {
-              cursorControl.setCursor(pointer.PointerStyle.SOUTH_EAST);
-            } else {
-              cursorControl.restoreDefault();
-            }
-          })
-          .onTouch((event: TouchEvent) => {
-            this.handleResizeTouch(event);
-          })
       }
       .width('100%')
       .height(RESIZE_HANDLE_SIZE)
@@ -158,6 +183,14 @@ struct Popup {
     .padding({ left: 14, right: 14, top: 12, bottom: 8 })
     .backgroundColor($r('app.color.app_surface'))
     .focusable(true)
+    .onFocus(() => {
+      this.isPreviewFocusActive = true;
+      this.updateImagePreview();
+    })
+    .onBlur(() => {
+      this.isPreviewFocusActive = false;
+      ImagePreviewWindowController.getInstance().hidePreview();
+    })
     .onKeyEvent((event: KeyEvent) => {
       return this.handleKeyEvent(event);
     })
@@ -218,9 +251,14 @@ struct Popup {
     .onHover((isHover: boolean) => {
       if (isHover) {
         this.selectedIndex = index;
+        this.hoveredPreviewItemId = item.id;
         this.updateImagePreview();
         cursorControl.setCursor(pointer.PointerStyle.HAND_POINTING);
       } else {
+        if (this.hoveredPreviewItemId === item.id) {
+          this.hoveredPreviewItemId = '';
+          ImagePreviewWindowController.getInstance().hidePreview();
+        }
         cursorControl.restoreDefault();
       }
     })
@@ -366,7 +404,7 @@ struct Popup {
       return false;
     }
     if (event.keyCode === KeyCode.KEYCODE_ESCAPE) {
-      PopupWindowController.getInstance().hidePopup();
+      this.closePopupSurface();
       return true;
     }
     if (this.isPreviousKey(event.keyCode)) {
@@ -396,6 +434,9 @@ struct Popup {
   }
 
   private handleResizeTouch(event: TouchEvent): void {
+    if (!this.isFloatingWindowMode()) {
+      return;
+    }
     const point = this.resizeTouchPoint(event);
     if (point === undefined) {
       return;
@@ -534,11 +575,45 @@ struct Popup {
 
   private selectItem(item: ClipboardItem): void {
     this.historyStore.copyItem(item).then((isCopied: boolean) => {
-      PopupWindowController.getInstance().hidePopup().then(() => {
+      this.closePopupSurface().then(() => {
         if (isCopied && this.settings.isDebugModeEnabled && this.settings.isAutoPasteEnabled) {
           AutoPasteService.getInstance().pasteAfterDelay();
         }
       });
+    });
+  }
+
+  private isFloatingWindowMode(): boolean {
+    return this.settings.isDebugModeEnabled && this.settings.isFloatingWindowPresentationEnabled;
+  }
+
+  private async closePopupSurface(): Promise<void> {
+    if (this.isFloatingWindowMode()) {
+      await PopupWindowController.getInstance().hidePopup();
+      return;
+    }
+    const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+    try {
+      await context.moveAbilityToBackground();
+    } catch (err) {
+      try {
+        await context.terminateSelf();
+      } catch (terminateErr) {
+      }
+    }
+  }
+
+  private openSettingsWindow(): void {
+    const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
+    const want: Want = {
+      bundleName: context.abilityInfo.bundleName,
+      abilityName: SETTINGS_ABILITY_NAME,
+      moduleName: context.abilityInfo.moduleName,
+      parameters: {
+        source: 'popup'
+      }
+    };
+    context.startAbility(want).catch(() => {
     });
   }
 
@@ -549,6 +624,10 @@ struct Popup {
       return;
     }
     const item = items[this.selectedIndex];
+    if (!this.isPreviewFocusActive || this.hoveredPreviewItemId !== item.id) {
+      ImagePreviewWindowController.getInstance().hidePreview();
+      return;
+    }
     if (this.hasLocalImagePreview(item) || this.canPreviewRemoteImage(item) || this.shouldShowTextPreview(item)) {
       ImagePreviewWindowController.getInstance().showPreview(item.id);
     } else {

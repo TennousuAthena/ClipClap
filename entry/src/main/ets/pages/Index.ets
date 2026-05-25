@@ -12,6 +12,7 @@ import { PreviewTextFormatter, PreviewTextSegment } from '../model/PreviewTextSe
 
 const NAV_HISTORY = 'history';
 const NAV_SETTINGS = 'settings';
+const NAV_DEVELOPER = 'developer';
 const NAV_ABOUT = 'about';
 const SETTING_LISTENING = 'listening';
 const SETTING_AUTO_PASTE = 'autoPaste';
@@ -20,6 +21,7 @@ const SETTING_REMOTE_IMAGE_PREVIEW = 'remoteImagePreview';
 const SETTING_RECORD_LOCAL_FILES = 'recordLocalFiles';
 const SETTING_STATUS_BAR_ICON = 'statusBarIcon';
 const SETTING_DEBUG_MODE = 'debugMode';
+const SETTING_FLOATING_WINDOW_PRESENTATION = 'floatingWindowPresentation';
 const SETTING_HIDE_ON_BLUR = 'hideOnBlur';
 const SETTING_AUTO_STARTUP = 'autoStartup';
 const VERSION_UNLOCK_TAPS = 5;
@@ -91,6 +93,8 @@ struct Index {
           this.HistoryView()
         } else if (this.activeNav === NAV_SETTINGS) {
           this.SettingsView()
+        } else if (this.activeNav === NAV_DEVELOPER) {
+          this.DeveloperView()
         } else {
           this.AboutView()
         }
@@ -123,6 +127,9 @@ struct Index {
 
       this.NavButton(NAV_HISTORY, $r('app.string.nav_history'), $r('sys.symbol.list_bullet'))
       this.NavButton(NAV_SETTINGS, $r('app.string.nav_settings'), $r('sys.symbol.gearshape'))
+      if (this.isDebugSwitchVisible) {
+        this.NavButton(NAV_DEVELOPER, $r('app.string.nav_developer'), $r('sys.symbol.laboratories'))
+      }
       this.NavButton(NAV_ABOUT, $r('app.string.nav_about'), $r('sys.symbol.info_circle'))
 
       Blank()
@@ -239,7 +246,7 @@ struct Index {
       .alignItems(HorizontalAlign.Start)
       .layoutWeight(1)
 
-      if (this.settings.isDebugModeEnabled) {
+      if (this.settings.isDebugModeEnabled && this.settings.isFloatingWindowPresentationEnabled) {
         Button() {
           this.ButtonLabel($r('sys.symbol.rectangle_and_arrowshape_turn_up_right'),
             $r('app.string.action_open_popup'), $r('app.color.app_on_accent'))
@@ -285,14 +292,14 @@ struct Index {
 
         Button() {
           this.ButtonLabel($r('sys.symbol.clean'), $r('app.string.action_clear'),
-            $r('app.color.app_warning_text'))
+            $r('app.color.app_on_accent'))
         }
           .height(40)
           .margin({ left: 8 })
-          .backgroundColor($r('app.color.app_warning_soft'))
+          .backgroundColor($r('app.color.app_danger'))
           .borderRadius(8)
           .onClick(() => {
-            this.historyStore.clearUnpinned();
+            this.confirmClearHistory();
           })
       }
       .width('100%')
@@ -306,7 +313,7 @@ struct Index {
             ListItem() {
               this.HistoryItem(item)
             }
-          }, (item: ClipboardItem) => item.id)
+          }, (item: ClipboardItem) => `${item.id}_${item.isPinned ? 'pinned' : 'unpinned'}`)
         }
         .layoutWeight(1)
         .width('100%')
@@ -606,19 +613,6 @@ struct Index {
       Column() {
         this.AboutLine()
         this.VersionLine()
-        if (this.isDebugSwitchVisible) {
-          this.ToggleLine($r('app.string.setting_debug_mode'), $r('app.string.setting_debug_mode_desc'),
-            this.settings.isDebugModeEnabled, SETTING_DEBUG_MODE)
-          if (this.settings.isDebugModeEnabled) {
-            this.ToggleLine($r('app.string.setting_record_local_files'),
-              $r('app.string.setting_record_local_files_desc'), this.settings.isRecordLocalFilesEnabled,
-              SETTING_RECORD_LOCAL_FILES)
-            this.ToggleLine($r('app.string.setting_status_bar_icon'), $r('app.string.setting_status_bar_icon_desc'),
-              this.settings.isStatusBarIconEnabled, SETTING_STATUS_BAR_ICON)
-            this.ToggleLine($r('app.string.setting_auto_paste'), $r('app.string.setting_auto_paste_desc'),
-              this.settings.isAutoPasteEnabled, SETTING_AUTO_PASTE)
-          }
-        }
         this.HotkeySettings()
         this.CapacitySettings()
         this.PermissionLine()
@@ -635,6 +629,38 @@ struct Index {
           this.settings.isHideOnBlurEnabled, SETTING_HIDE_ON_BLUR)
       }
       .width('100%')
+      .height('100%')
+      .justifyContent(FlexAlign.Start)
+      .padding({ left: 24, right: 24, top: 24, bottom: 36 })
+    }
+    .width('100%')
+    .layoutWeight(1)
+    .scrollable(ScrollDirection.Vertical)
+    .scrollBar(BarState.On)
+  }
+
+  @Builder
+  private DeveloperView() {
+    Scroll() {
+      Column() {
+        this.ToggleLine($r('app.string.setting_debug_mode'), $r('app.string.setting_debug_mode_desc'),
+          this.settings.isDebugModeEnabled, SETTING_DEBUG_MODE)
+        if (this.settings.isDebugModeEnabled) {
+          this.ToggleLine($r('app.string.setting_record_local_files'),
+            $r('app.string.setting_record_local_files_desc'), this.settings.isRecordLocalFilesEnabled,
+            SETTING_RECORD_LOCAL_FILES)
+          this.ToggleLine($r('app.string.setting_status_bar_icon'), $r('app.string.setting_status_bar_icon_desc'),
+            this.settings.isStatusBarIconEnabled, SETTING_STATUS_BAR_ICON)
+          this.ToggleLine($r('app.string.setting_floating_window_presentation'),
+            $r('app.string.setting_floating_window_presentation_desc'),
+            this.settings.isFloatingWindowPresentationEnabled, SETTING_FLOATING_WINDOW_PRESENTATION)
+          this.ToggleLine($r('app.string.setting_auto_paste'), $r('app.string.setting_auto_paste_desc'),
+            this.settings.isAutoPasteEnabled, SETTING_AUTO_PASTE)
+        }
+      }
+      .width('100%')
+      .height('100%')
+      .justifyContent(FlexAlign.Start)
       .padding({ left: 24, right: 24, top: 24, bottom: 36 })
     }
     .width('100%')
@@ -1013,6 +1039,31 @@ struct Index {
     });
   }
 
+  private confirmClearHistory(): void {
+    this.getUIContext().showAlertDialog({
+      title: $r('app.string.clear_history_confirm_title'),
+      message: $r('app.string.clear_history_confirm_message'),
+      alignment: DialogAlignment.Center,
+      buttons: [
+        {
+          value: $r('app.string.action_clear'),
+          action: () => {
+            this.historyStore.clearAll();
+          }
+        },
+        {
+          value: $r('app.string.action_cancel'),
+          action: () => {
+          }
+        }
+      ],
+      buttonDirection: DialogButtonDirection.HORIZONTAL,
+      autoCancel: true,
+      cancel: () => {
+      }
+    });
+  }
+
   private updateToggle(key: string, isOn: boolean): void {
     if (key === SETTING_LISTENING) {
       this.settingsStore.setListeningEnabled(isOn).then(() => {
@@ -1027,11 +1078,6 @@ struct Index {
         const context = this.getUIContext().getHostContext() as common.UIAbilityContext;
         this.configureStatusBarIcon(context);
         this.historyStore.setRecordLocalFilesEnabled(this.isRecordLocalFilesActive());
-        if (!this.settings.isDebugModeEnabled && this.settings.isAutoPasteEnabled) {
-          this.settingsStore.setAutoPasteEnabled(false).then(() => {
-            this.settings = this.settingsStore.getSettings();
-          });
-        }
       });
       return;
     }
@@ -1076,6 +1122,12 @@ struct Index {
       });
       return;
     }
+    if (key === SETTING_FLOATING_WINDOW_PRESENTATION) {
+      this.settingsStore.setFloatingWindowPresentationEnabled(isOn).then(() => {
+        this.settings = this.settingsStore.getSettings();
+      });
+      return;
+    }
     this.settingsStore.setAutoPasteEnabled(isOn).then(() => {
       this.settings = this.settingsStore.getSettings();
     });
@@ -1088,6 +1140,7 @@ struct Index {
     this.versionTapCount += 1;
     if (this.versionTapCount >= VERSION_UNLOCK_TAPS) {
       this.isDebugSwitchVisible = true;
+      this.activeNav = NAV_DEVELOPER;
     }
   }
 
@@ -1325,6 +1378,9 @@ struct Index {
     if (this.activeNav === NAV_SETTINGS) {
       return $r('app.string.nav_settings');
     }
+    if (this.activeNav === NAV_DEVELOPER) {
+      return $r('app.string.nav_developer');
+    }
     if (this.activeNav === NAV_ABOUT) {
       return $r('app.string.nav_about');
     }
@@ -1334,6 +1390,9 @@ struct Index {
   private pageSubtitle(): Resource {
     if (this.activeNav === NAV_SETTINGS) {
       return $r('app.string.settings_subtitle');
+    }
+    if (this.activeNav === NAV_DEVELOPER) {
+      return $r('app.string.developer_subtitle');
     }
     if (this.activeNav === NAV_ABOUT) {
       return $r('app.string.about_subtitle');

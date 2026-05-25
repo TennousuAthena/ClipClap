@@ -637,14 +637,32 @@ export class ClipboardHistoryStore {
     this.notify();
   }
 
+  async clearAll(): Promise<void> {
+    for (let index = 0; index < this.items.length; index++) {
+      const item = this.items[index];
+      this.deleteImageAsset(item);
+      this.memoryPasteData.delete(item.id);
+      this.memoryUnifiedData.delete(item.id);
+    }
+    this.items = [];
+    await this.save();
+    this.status = ClipboardHistoryStatus.CLEAR_EMPTY;
+    this.notify();
+  }
+
   async togglePinned(id: string): Promise<void> {
     const index = this.items.findIndex((item: ClipboardItem) => item.id === id);
     if (index < 0) {
       return;
     }
-    this.items[index].isPinned = !this.items[index].isPinned;
-    const isPinned = this.items[index].isPinned;
+    const current = this.items[index];
+    const next = ClipboardItem.fromSnapshot(current.toSnapshot());
+    next.pixelMap = current.pixelMap;
+    next.isPinned = !current.isPinned;
+    this.items[index] = next;
+    const isPinned = next.isPinned;
     this.sortItems();
+    this.items = this.items.slice();
     await this.save();
     this.status = isPinned ? ClipboardHistoryStatus.PIN_DONE : ClipboardHistoryStatus.UNPIN_DONE;
     this.notify();

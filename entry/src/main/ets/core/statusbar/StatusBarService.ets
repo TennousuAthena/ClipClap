@@ -1,9 +1,10 @@
-import { common } from '@kit.AbilityKit';
+import { common, Want } from '@kit.AbilityKit';
 import { BusinessError, Callback, emitter } from '@kit.BasicServicesKit';
 import { image } from '@kit.ImageKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { statusBarManager } from '@kit.DeskTopExtensionKit';
 import { PopupWindowController } from '../window/PopupWindowController';
+import { SettingsStore } from '../settings/SettingsStore';
 
 const DOMAIN = 0x0000;
 const TAG = 'ClipClapStatusBar';
@@ -67,7 +68,12 @@ export class StatusBarService {
       return;
     }
     this.lastActivationAt = now;
-    PopupWindowController.getInstance().showPopup();
+    const settings = SettingsStore.getInstance().getSettings();
+    if (settings.isDebugModeEnabled && settings.isFloatingWindowPresentationEnabled) {
+      PopupWindowController.getInstance().showPopup();
+      return;
+    }
+    this.openMainWindow();
   }
 
   unregister(): void {
@@ -94,6 +100,24 @@ export class StatusBarService {
       this.isRegistered = false;
       this.context = undefined;
     }
+  }
+
+  private openMainWindow(): void {
+    if (!this.context) {
+      hilog.error(DOMAIN, TAG, 'Cannot open main window because UIAbilityContext is not ready.');
+      return;
+    }
+    const want: Want = {
+      bundleName: this.context.abilityInfo.bundleName,
+      abilityName: 'EntryAbility',
+      moduleName: this.context.abilityInfo.moduleName,
+      parameters: {
+        source: 'statusBar'
+      }
+    };
+    this.context.startAbility(want).catch((err: BusinessError) => {
+      hilog.error(DOMAIN, TAG, 'Failed to open main window. Cause: %{public}s', JSON.stringify(err));
+    });
   }
 
   private async createStatusBarIcon(): Promise<statusBarManager.StatusBarIcon> {

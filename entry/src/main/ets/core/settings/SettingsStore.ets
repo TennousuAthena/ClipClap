@@ -10,6 +10,7 @@ const KEY_PLAIN_TEXT_PASTE = 'plain_text_paste_enabled';
 const KEY_REMOTE_IMAGE_PREVIEW = 'remote_image_preview_enabled';
 const KEY_RECORD_LOCAL_FILES = 'record_local_files_enabled';
 const KEY_STATUS_BAR_ICON = 'status_bar_icon_enabled';
+const KEY_FLOATING_WINDOW_PRESENTATION = 'floating_window_presentation_enabled';
 const KEY_HOTKEY_LABEL = 'hotkey_label';
 const KEY_HOTKEY_FINAL_KEY = 'hotkey_final_key';
 const KEY_HOTKEY_CTRL = 'hotkey_ctrl_enabled';
@@ -64,6 +65,7 @@ export class SettingsStore {
     copy.isRecordLocalFilesEnabled = this.settings.isRecordLocalFilesEnabled;
     copy.isStatusBarIconEnabled = this.settings.isStatusBarIconEnabled;
     copy.isDebugModeEnabled = this.settings.isDebugModeEnabled;
+    copy.isFloatingWindowPresentationEnabled = this.settings.isFloatingWindowPresentationEnabled;
     copy.isHideOnBlurEnabled = this.settings.isHideOnBlurEnabled;
     copy.isAutoStartupEnabled = this.settings.isAutoStartupEnabled;
     copy.popupLeft = this.settings.popupLeft;
@@ -105,6 +107,15 @@ export class SettingsStore {
 
   async setDebugModeEnabled(isEnabled: boolean): Promise<void> {
     this.settings.isDebugModeEnabled = isEnabled;
+    if (!isEnabled) {
+      this.settings.isAutoPasteEnabled = false;
+      this.settings.isFloatingWindowPresentationEnabled = false;
+    }
+    await this.save();
+  }
+
+  async setFloatingWindowPresentationEnabled(isEnabled: boolean): Promise<void> {
+    this.settings.isFloatingWindowPresentationEnabled = isEnabled;
     await this.save();
   }
 
@@ -160,6 +171,7 @@ export class SettingsStore {
     let remoteImagePreview: preferences.ValueType = this.settings.isRemoteImagePreviewEnabled;
     let recordLocalFiles: preferences.ValueType = this.settings.isRecordLocalFilesEnabled;
     let statusBarIcon: preferences.ValueType = this.settings.isStatusBarIconEnabled;
+    let floatingWindowPresentation: preferences.ValueType = this.settings.isFloatingWindowPresentationEnabled;
     let hotkeyLabel: preferences.ValueType = this.settings.hotkeyLabel;
     let hotkeyFinalKey: preferences.ValueType = this.settings.hotkeyFinalKey;
     let hotkeyCtrl: preferences.ValueType = this.settings.isHotkeyCtrlEnabled;
@@ -182,6 +194,8 @@ export class SettingsStore {
         this.settings.isRemoteImagePreviewEnabled);
       recordLocalFiles = await this.prefs.get(KEY_RECORD_LOCAL_FILES, this.settings.isRecordLocalFilesEnabled);
       statusBarIcon = await this.prefs.get(KEY_STATUS_BAR_ICON, this.settings.isStatusBarIconEnabled);
+      floatingWindowPresentation = await this.prefs.get(KEY_FLOATING_WINDOW_PRESENTATION,
+        this.settings.isFloatingWindowPresentationEnabled);
       hotkeyLabel = await this.prefs.get(KEY_HOTKEY_LABEL, this.settings.hotkeyLabel);
       hotkeyFinalKey = await this.prefs.get(KEY_HOTKEY_FINAL_KEY, this.settings.hotkeyFinalKey);
       hotkeyCtrl = await this.prefs.get(KEY_HOTKEY_CTRL, this.settings.isHotkeyCtrlEnabled);
@@ -218,6 +232,9 @@ export class SettingsStore {
     }
     if (typeof statusBarIcon === 'boolean') {
       this.settings.isStatusBarIconEnabled = statusBarIcon;
+    }
+    if (typeof floatingWindowPresentation === 'boolean') {
+      this.settings.isFloatingWindowPresentationEnabled = floatingWindowPresentation;
     }
     if (typeof hotkeyLabel === 'string') {
       this.settings.hotkeyLabel = hotkeyLabel;
@@ -258,6 +275,7 @@ export class SettingsStore {
     }
     if (!this.settings.isDebugModeEnabled) {
       this.settings.isAutoPasteEnabled = false;
+      this.settings.isFloatingWindowPresentationEnabled = false;
     }
     this.settings.hotkeyLabel = this.buildHotkeyLabel();
   }
@@ -275,6 +293,7 @@ export class SettingsStore {
       await this.prefs.put(KEY_REMOTE_IMAGE_PREVIEW, this.settings.isRemoteImagePreviewEnabled);
       await this.prefs.put(KEY_RECORD_LOCAL_FILES, this.settings.isRecordLocalFilesEnabled);
       await this.prefs.put(KEY_STATUS_BAR_ICON, this.settings.isStatusBarIconEnabled);
+      await this.prefs.put(KEY_FLOATING_WINDOW_PRESENTATION, this.settings.isFloatingWindowPresentationEnabled);
       await this.prefs.put(KEY_HOTKEY_LABEL, this.settings.hotkeyLabel);
       await this.prefs.put(KEY_HOTKEY_FINAL_KEY, this.settings.hotkeyFinalKey);
       await this.prefs.put(KEY_HOTKEY_CTRL, this.settings.isHotkeyCtrlEnabled);

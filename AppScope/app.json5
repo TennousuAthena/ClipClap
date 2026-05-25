@@ -1,8 +1,8 @@
 {
   "app": {
     "bundleName": "moe.kiwi.clipclap",
-    "vendor": "example",
-    "versionCode": 1000000,
+    "vendor": "Kiwi Moe",
+    "versionCode": 1000001,
     "versionName": "0.1.0",
     "icon": "$media:layered_image",
     "label": "$string:app_name"
