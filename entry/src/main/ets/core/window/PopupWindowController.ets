@@ -1,4 +1,3 @@
-import { common } from '@kit.AbilityKit';
 import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
@@ -13,7 +12,6 @@ const SAVE_RECT_DEBOUNCE_MS = 200;
 
 export class PopupWindowController {
   private static instance: PopupWindowController = new PopupWindowController();
-  private context?: common.UIAbilityContext;
   private windowStage?: window.WindowStage;
   private popupWindow?: window.Window;
   private isCreating: boolean = false;
@@ -25,10 +23,6 @@ export class PopupWindowController {
 
   static getInstance(): PopupWindowController {
     return PopupWindowController.instance;
-  }
-
-  setContext(context: common.UIAbilityContext): void {
-    this.context = context;
   }
 
   setWindowStage(windowStage: window.WindowStage): void {
@@ -137,21 +131,6 @@ export class PopupWindowController {
   }
 
   private async createPopupWindow(): Promise<window.Window> {
-    if (this.context) {
-      try {
-        const config: window.Configuration = {
-          name: POPUP_WINDOW_NAME,
-          windowType: window.WindowType.TYPE_FLOAT,
-          ctx: this.context
-        };
-        return await window.createWindow(config);
-      } catch (err) {
-        const error = err as BusinessError;
-        hilog.warn(DOMAIN, TAG, 'Float window unavailable, fallback to sub window. Cause: %{public}s',
-          JSON.stringify(error));
-      }
-    }
-
     if (!this.windowStage) {
       throw new Error('WindowStage is not ready.');
     }

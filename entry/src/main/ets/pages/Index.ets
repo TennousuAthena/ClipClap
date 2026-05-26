@@ -629,9 +629,9 @@ struct Index {
           this.settings.isHideOnBlurEnabled, SETTING_HIDE_ON_BLUR)
       }
       .width('100%')
-      .height('100%')
+      .constraintSize({ minHeight: '100%' })
       .justifyContent(FlexAlign.Start)
-      .padding({ left: 24, right: 24, top: 24, bottom: 36 })
+      .padding({ left: 24, right: 32, top: 24, bottom: 36 })
     }
     .width('100%')
     .layoutWeight(1)
@@ -659,9 +659,9 @@ struct Index {
         }
       }
       .width('100%')
-      .height('100%')
+      .constraintSize({ minHeight: '100%' })
       .justifyContent(FlexAlign.Start)
-      .padding({ left: 24, right: 24, top: 24, bottom: 36 })
+      .padding({ left: 24, right: 32, top: 24, bottom: 36 })
     }
     .width('100%')
     .layoutWeight(1)

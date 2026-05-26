@@ -38,9 +38,7 @@ export default class EntryAbility extends UIAbility {
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
 
     AppStorage.setOrCreate('windowStage', windowStage);
-    ImagePreviewWindowController.getInstance().setContext(this.context as common.UIAbilityContext);
     ImagePreviewWindowController.getInstance().setWindowStage(windowStage);
-    PopupWindowController.getInstance().setContext(this.context as common.UIAbilityContext);
     PopupWindowController.getInstance().setWindowStage(windowStage);
     HotkeyService.getInstance().setContext(this.context as common.UIAbilityContext);
     SettingsStore.getInstance().init(this.context).then(() => {

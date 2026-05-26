@@ -175,17 +175,15 @@ entry/src/main/ets/
 
 ## 构建方式
 
-推荐使用 DevEco Studio 打开项目并执行构建。
+推荐使用 DevEco Studio 打开项目并执行构建。开发、编译、测试、安装和调试命令见 [DevEco 开发、编译、调试指南](docs/deveco-development.md)。
 
 命令行构建可参考：
 
 ```bash
-DEVECO_SDK_HOME=/Applications/DevEco-Studio.app/Contents/sdk \
-/Applications/DevEco-Studio.app/Contents/tools/hvigor/bin/hvigorw assembleHap \
-  --mode module -p module=entry@default -p product=default --no-daemon
+./hvigorw assembleHap --mode module -p module=entry@default -p product=default --no-daemon
 ```
 
-当前仓库没有内置 `hvigorw`，命令依赖本机 DevEco Studio 安装路径。公开仓库中的 `build-profile.json5` 已移除签名配置；需要真机安装或发布时，请在 DevEco Studio 中为本机生成签名配置，不要把个人证书、Profile、密码或本机绝对路径提交到共享仓库。
+当前仓库包含 `hvigorw` 包装脚本，它会优先查找本机 DevEco Studio / Hvigor 安装。需要真机安装或发布时，请在 DevEco Studio 中为本机生成签名配置，不要把个人证书、Profile、密码或本机绝对路径提交到共享仓库。
 
 ---
 

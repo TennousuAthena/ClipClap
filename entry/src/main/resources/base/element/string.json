@@ -17,10 +17,6 @@
       "value": "用于读取系统剪贴板内容并生成本地剪贴板历史。"
     },
     {
-      "name": "float_window_permission_reason",
-      "value": "用于在快捷键触发时显示剪贴板历史全局悬浮窗口。"
-    },
-    {
       "name": "internet_permission_reason",
       "value": "用于按用户设置预览剪贴板 HTML 内容中的远程图片。"
     },
@@ -250,7 +246,7 @@
     },
     {
       "name": "setting_hotkey_desc",
-      "value": "设置唤起剪贴板悬浮窗的全局快捷键。"
+      "value": "设置唤起 ClipClap 的全局快捷键。"
     },
     {
       "name": "hotkey_meta_key",
@@ -354,11 +350,11 @@
     },
     {
       "name": "setting_floating_window_presentation",
-      "value": "以悬浮窗方式展现窗口"
+      "value": "以子窗口方式展现窗口"
     },
     {
       "name": "setting_floating_window_presentation_desc",
-      "value": "开发中：快捷键和状态栏入口打开悬浮窗；关闭时拉起主程序窗口。"
+      "value": "开发中：快捷键和状态栏入口打开应用内子窗口；关闭时拉起主程序窗口。"
     },
     {
       "name": "setting_auto_startup",
@@ -378,11 +374,11 @@
     },
     {
       "name": "setting_hide_on_blur",
-      "value": "失去焦点后隐藏悬浮窗"
+      "value": "失去焦点后隐藏窗口"
     },
     {
       "name": "setting_hide_on_blur_desc",
-      "value": "切换到其他窗口后自动收起剪贴板悬浮窗。"
+      "value": "切换到其他窗口后自动收起剪贴板窗口。"
     },
     {
       "name": "debug_raw_payload",
@@ -394,7 +390,7 @@
     },
     {
       "name": "about_version",
-      "value": "0.1.0"
+      "value": "0.1.1"
     },
     {
       "name": "about_body",

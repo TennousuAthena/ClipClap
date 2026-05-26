@@ -1,4 +1,3 @@
-import { common } from '@kit.AbilityKit';
 import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
@@ -14,7 +13,6 @@ const IMAGE_PREVIEW_GAP_X = 20;
 
 export class ImagePreviewWindowController {
   private static instance: ImagePreviewWindowController = new ImagePreviewWindowController();
-  private context?: common.UIAbilityContext;
   private windowStage?: window.WindowStage;
   private previewWindow?: window.Window;
   private isCreating: boolean = false;
@@ -22,10 +20,6 @@ export class ImagePreviewWindowController {
 
   static getInstance(): ImagePreviewWindowController {
     return ImagePreviewWindowController.instance;
-  }
-
-  setContext(context: common.UIAbilityContext): void {
-    this.context = context;
   }
 
   setWindowStage(windowStage: window.WindowStage): void {
@@ -74,21 +68,6 @@ export class ImagePreviewWindowController {
   }
 
   private async createPreviewWindow(): Promise<window.Window> {
-    if (this.context) {
-      try {
-        const config: window.Configuration = {
-          name: IMAGE_PREVIEW_WINDOW_NAME,
-          windowType: window.WindowType.TYPE_FLOAT,
-          ctx: this.context
-        };
-        return await window.createWindow(config);
-      } catch (err) {
-        const error = err as BusinessError;
-        hilog.warn(DOMAIN, TAG, 'Float image preview unavailable, fallback to sub window. Cause: %{public}s',
-          JSON.stringify(error));
-      }
-    }
-
     if (!this.windowStage) {
       throw new Error('WindowStage is not ready.');
     }

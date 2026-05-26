@@ -28,9 +28,7 @@ export default class SettingsAbility extends UIAbility {
 
   onWindowStageCreate(windowStage: window.WindowStage): void {
     hilog.info(DOMAIN, 'SettingsAbility', '%{public}s', 'Ability onWindowStageCreate');
-    ImagePreviewWindowController.getInstance().setContext(this.context as common.UIAbilityContext);
     ImagePreviewWindowController.getInstance().setWindowStage(windowStage);
-    PopupWindowController.getInstance().setContext(this.context as common.UIAbilityContext);
     PopupWindowController.getInstance().setWindowStage(windowStage);
     HotkeyService.getInstance().setContext(this.context as common.UIAbilityContext);
 
