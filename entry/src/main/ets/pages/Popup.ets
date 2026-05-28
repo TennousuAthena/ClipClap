@@ -6,6 +6,7 @@ import { ImagePreviewWindowController } from '../core/window/ImagePreviewWindowC
 import { PopupWindowController } from '../core/window/PopupWindowController';
 import { SettingsStore } from '../core/settings/SettingsStore';
 import { AppSettings } from '../model/AppSettings';
+import { hilog } from '@kit.PerformanceAnalysisKit';
 import { PreviewTextFormatter, PreviewTextSegment } from '../model/PreviewTextSegment';
 
 const POPUP_SEARCH_INPUT_ID = 'popup_search_input';
@@ -114,15 +115,6 @@ struct Popup {
           .backgroundColor(Color.Transparent)
           .onClick(() => {
             this.openSettingsWindow();
-          })
-        Button() {
-          this.ButtonLabel($r('sys.symbol.xmark'), $r('app.string.action_close'), $r('app.color.app_text_secondary'))
-        }
-          .height(42)
-          .margin({ left: 10 })
-          .backgroundColor(Color.Transparent)
-          .onClick(() => {
-            this.closePopupSurface();
           })
       }
       .width('100%')
@@ -596,10 +588,7 @@ struct Popup {
     try {
       await context.moveAbilityToBackground();
     } catch (err) {
-      try {
-        await context.terminateSelf();
-      } catch (terminateErr) {
-      }
+      hilog.warn(0x0000, 'Popup', 'Failed to move to background. Cause: %{public}s', JSON.stringify(err));
     }
   }
 

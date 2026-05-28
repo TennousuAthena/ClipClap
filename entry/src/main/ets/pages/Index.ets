@@ -1,4 +1,4 @@
-import { common, Want } from '@kit.AbilityKit';
+import { common, Want, autoStartupManager } from '@kit.AbilityKit';
 import { KeyCode, pointer } from '@kit.InputKit';
 import { ClipboardHistoryStatus, ClipboardHistoryStore, ClipboardItem } from '../services/ClipboardHistoryStore';
 import { PermissionService } from '../core/permission/PermissionService';
@@ -1165,7 +1165,15 @@ struct Index {
   }
 
   private refreshAutoStartupStatus(): void {
-    this.isAutoStartupAllowed = false;
+    try {
+      autoStartupManager.getAutoStartupStatusForSelf().then((isAutoStartup: boolean) => {
+        this.isAutoStartupAllowed = isAutoStartup;
+      }).catch(() => {
+        this.isAutoStartupAllowed = false;
+      });
+    } catch (err) {
+      this.isAutoStartupAllowed = false;
+    }
   }
 
   private configureStatusBarIcon(context: common.UIAbilityContext): void {
@@ -1185,9 +1193,6 @@ struct Index {
     const want: Want = {
       bundleName: SETTINGS_BUNDLE_NAME,
       abilityName: SETTINGS_ABILITY_NAME,
-      parameters: {
-        bundleName: APP_BUNDLE_NAME
-      }
     };
     context.startAbility(want).catch(() => {
       this.openManageApplicationsSettings(context);

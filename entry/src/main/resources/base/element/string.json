@@ -93,6 +93,18 @@
       "value": "关闭"
     },
     {
+      "name": "action_exit",
+      "value": "退出"
+    },
+    {
+      "name": "exit_confirm_title",
+      "value": "退出 ClipClap？"
+    },
+    {
+      "name": "exit_confirm_message",
+      "value": "退出后，快捷键将无法唤醒剪贴板管理，直到重新打开应用。确定退出？"
+    },
+    {
       "name": "action_open_popup",
       "value": "打开弹窗"
     },
@@ -390,7 +402,7 @@
     },
     {
       "name": "about_version",
-      "value": "0.1.1"
+      "value": "0.1.2"
     },
     {
       "name": "about_body",

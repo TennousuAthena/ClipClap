@@ -11,8 +11,11 @@ import { ClipboardHistoryStore } from '../services/ClipboardHistoryStore';
 
 const DOMAIN = 0x0000;
 const CURRENT_COLOR_MODE = 'currentColorMode';
+const WINDOW_COUNT_KEY = 'openWindowCount';
 
 export default class EntryAbility extends UIAbility {
+  private isExitConfirmed: boolean = false;
+
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     try {
       this.context.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET);
@@ -34,8 +37,10 @@ export default class EntryAbility extends UIAbility {
   }
 
   onWindowStageCreate(windowStage: window.WindowStage): void {
-    // Main window is created, set main page for this ability
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
+
+    const prevCount = AppStorage.get<number>(WINDOW_COUNT_KEY) ?? 0;
+    AppStorage.setOrCreate(WINDOW_COUNT_KEY, prevCount + 1);
 
     AppStorage.setOrCreate('windowStage', windowStage);
     ImagePreviewWindowController.getInstance().setWindowStage(windowStage);
@@ -69,28 +74,84 @@ export default class EntryAbility extends UIAbility {
   }
 
   onWindowStageDestroy(): void {
-    // Main window is destroyed, release UI related resources
     HotkeyService.getInstance().clearContext(this.context as common.UIAbilityContext);
     ImagePreviewWindowController.getInstance().destroyPreview();
     PopupWindowController.getInstance().destroyPopup();
+    const prevCount = AppStorage.get<number>(WINDOW_COUNT_KEY) ?? 1;
+    AppStorage.setOrCreate(WINDOW_COUNT_KEY, Math.max(prevCount - 1, 0));
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onWindowStageDestroy');
   }
 
   onPrepareToTerminate(): boolean {
-    this.context.moveAbilityToBackground().catch((err: BusinessError) => {
-      hilog.warn(DOMAIN, 'testTag', 'Failed to move ability to background before terminate. Cause: %{public}s',
-        JSON.stringify(err));
-    });
-    return true;
+    if (this.isExitConfirmed) {
+      return false;
+    }
+    const windowCount = AppStorage.get<number>(WINDOW_COUNT_KEY) ?? 1;
+    if (windowCount <= 1) {
+      this.showExitConfirmDialog();
+      return true;
+    }
+    return false;
+  }
+
+  private getUIContext(): UIContext | undefined {
+    try {
+      const win = this.context.windowStage.getMainWindowSync();
+      return win.getUIContext();
+    } catch (err) {
+      hilog.error(DOMAIN, 'testTag', 'Failed to get UIContext. Cause: %{public}s', JSON.stringify(err));
+      return undefined;
+    }
+  }
+
+  private showExitConfirmDialog(): void {
+    const uiContext = this.getUIContext();
+    if (!uiContext) {
+      this.isExitConfirmed = true;
+      try {
+        this.context.terminateSelf();
+      } catch (err) {
+        hilog.error(DOMAIN, 'testTag', 'Failed to terminate. Cause: %{public}s', JSON.stringify(err));
+      }
+      return;
+    }
+    try {
+      const resMgr = this.context.resourceManager;
+      const exitLabel = resMgr.getStringSync($r('app.string.action_exit').id);
+      const cancelLabel = resMgr.getStringSync($r('app.string.action_cancel').id);
+      uiContext.showAlertDialog({
+        title: $r('app.string.exit_confirm_title'),
+        message: $r('app.string.exit_confirm_message'),
+        alignment: DialogAlignment.Center,
+        buttons: [
+          {
+            value: exitLabel,
+            action: () => {
+              this.isExitConfirmed = true;
+              this.context.terminateSelf();
+            }
+          },
+          {
+            value: cancelLabel,
+            action: () => {
+            }
+          }
+        ],
+        buttonDirection: DialogButtonDirection.HORIZONTAL,
+        autoCancel: true,
+        cancel: () => {
+        }
+      });
+    } catch (err) {
+      hilog.error(DOMAIN, 'testTag', 'Failed to show exit dialog. Cause: %{public}s', JSON.stringify(err));
+    }
   }
 
   onForeground(): void {
-    // Ability has brought to foreground
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onForeground');
   }
 
   onBackground(): void {
-    // Ability has back to background
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onBackground');
   }
 }

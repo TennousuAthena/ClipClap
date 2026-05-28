@@ -9,8 +9,11 @@ import { ClipboardHistoryStore } from '../services/ClipboardHistoryStore';
 
 const DOMAIN = 0x0000;
 const CURRENT_COLOR_MODE = 'currentColorMode';
+const WINDOW_COUNT_KEY = 'openWindowCount';
 
 export default class SettingsAbility extends UIAbility {
+  private isExitConfirmed: boolean = false;
+
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     try {
       this.context.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET);
@@ -28,6 +31,10 @@ export default class SettingsAbility extends UIAbility {
 
   onWindowStageCreate(windowStage: window.WindowStage): void {
     hilog.info(DOMAIN, 'SettingsAbility', '%{public}s', 'Ability onWindowStageCreate');
+
+    const prevCount = AppStorage.get<number>(WINDOW_COUNT_KEY) ?? 0;
+    AppStorage.setOrCreate(WINDOW_COUNT_KEY, prevCount + 1);
+
     ImagePreviewWindowController.getInstance().setWindowStage(windowStage);
     PopupWindowController.getInstance().setWindowStage(windowStage);
     HotkeyService.getInstance().setContext(this.context as common.UIAbilityContext);
@@ -57,6 +64,73 @@ export default class SettingsAbility extends UIAbility {
   onWindowStageDestroy(): void {
     HotkeyService.getInstance().clearContext(this.context as common.UIAbilityContext);
     ImagePreviewWindowController.getInstance().destroyPreview();
+    const prevCount = AppStorage.get<number>(WINDOW_COUNT_KEY) ?? 1;
+    AppStorage.setOrCreate(WINDOW_COUNT_KEY, Math.max(prevCount - 1, 0));
     hilog.info(DOMAIN, 'SettingsAbility', '%{public}s', 'Ability onWindowStageDestroy');
+  }
+
+  onPrepareToTerminate(): boolean {
+    if (this.isExitConfirmed) {
+      return false;
+    }
+    const windowCount = AppStorage.get<number>(WINDOW_COUNT_KEY) ?? 1;
+    if (windowCount <= 1) {
+      this.showExitConfirmDialog();
+      return true;
+    }
+    return false;
+  }
+
+  private getUIContext(): UIContext | undefined {
+    try {
+      const win = this.context.windowStage.getMainWindowSync();
+      return win.getUIContext();
+    } catch (err) {
+      hilog.error(DOMAIN, 'SettingsAbility', 'Failed to get UIContext. Cause: %{public}s', JSON.stringify(err));
+      return undefined;
+    }
+  }
+
+  private showExitConfirmDialog(): void {
+    const uiContext = this.getUIContext();
+    if (!uiContext) {
+      this.isExitConfirmed = true;
+      try {
+        this.context.terminateSelf();
+      } catch (err) {
+        hilog.error(DOMAIN, 'SettingsAbility', 'Failed to terminate. Cause: %{public}s', JSON.stringify(err));
+      }
+      return;
+    }
+    try {
+      const resMgr = this.context.resourceManager;
+      const exitLabel = resMgr.getStringSync($r('app.string.action_exit').id);
+      const cancelLabel = resMgr.getStringSync($r('app.string.action_cancel').id);
+      uiContext.showAlertDialog({
+        title: $r('app.string.exit_confirm_title'),
+        message: $r('app.string.exit_confirm_message'),
+        alignment: DialogAlignment.Center,
+        buttons: [
+          {
+            value: exitLabel,
+            action: () => {
+              this.isExitConfirmed = true;
+              this.context.terminateSelf();
+            }
+          },
+          {
+            value: cancelLabel,
+            action: () => {
+            }
+          }
+        ],
+        buttonDirection: DialogButtonDirection.HORIZONTAL,
+        autoCancel: true,
+        cancel: () => {
+        }
+      });
+    } catch (err) {
+      hilog.error(DOMAIN, 'SettingsAbility', 'Failed to show exit dialog. Cause: %{public}s', JSON.stringify(err));
+    }
   }
 }
